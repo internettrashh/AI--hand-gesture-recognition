@@ -1,4 +1,4 @@
-import React, { useRef , useEffect,useState} from 'react';
+import React, { useRef , useEffect} from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import Webcam from 'react-webcam';
@@ -8,16 +8,8 @@ import { drawHand } from './masks/Handmask';
 function App() {
   const Webcamref = useRef(null);
   const canvasref = useRef(null);
-  const [modelLoaded, setModelLoaded] = useState(false);
   const runhandpose = async () => {
-    useEffect(() => {
-      const net = async () => {
-        await handpose.load();
-        setModelLoaded(true);
-      };
-    
-      loadModel();
-    }, []);
+    const net = await handpose.load();
     console.log('model load ho gaya ');
     setInterval(() => {
       detect(net);
@@ -60,11 +52,10 @@ function App() {
   };
 
   return (
-    
+    <>
       <div  className='App'>
         <header className='App-header'>
           <h1>tera haat dik raa?</h1>
-          {!modelLoaded && <h1>Waiting for the model to load...</h1>}
         
         <Webcam  ref={Webcamref} style={webcamstyle}/>
         <canvas
@@ -72,13 +63,13 @@ function App() {
           style={webcamstyle} />
         </header>
       </div>
-    
+    </>
   );
 }
 
 const webcamstyle = {
   position: 'absolute',
-  justifyContent: 'center',
+  
   marginLeft: 'auto',
   marginRight: 'auto',
   left: 0,
