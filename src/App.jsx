@@ -3,6 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import Webcam from 'react-webcam';
 import './App.css';
+import { drawHand } from './masks/Handmask';
 
 function App() {
   const Webcamref = useRef(null);
@@ -45,18 +46,33 @@ function App() {
      
 
       // render the mesh 
-      // const ctx =  canvasref.current.getContext("2d");
-      // drawHand(hand, ctx);
+      const ctx =  canvasref.current.getContext("2d");
+      drawHand(hand, ctx);
     }
   };
 
   return (
     <>
       <div  className='App'>
-        <header className='App-header'/>
+        <header className='App-header'>
           <h1>tera haat dik raa?</h1>
-          <canvas ref={canvasref} style={webcamstyle}/>
+        
         <Webcam  ref={Webcamref} style={webcamstyle}/>
+        <canvas
+          ref={canvasref}
+          style={{
+            position: "absolute",
+            marginLeft: "auto",
+            marginRight: "auto",
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            zIndex: 9,
+            width: 640,
+            height: 480,
+          }}
+        />
+        </header>
       </div>
     </>
   );
