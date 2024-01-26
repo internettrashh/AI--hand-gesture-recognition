@@ -1,9 +1,16 @@
-import React, { useRef , useEffect} from 'react';
+import React, { useRef , useEffect,useState} from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import Webcam from 'react-webcam';
 import './App.css';
 import { drawHand } from './masks/Handmask';
+import * as fp from 'fingerpose';
+import fku from "./assets/fku.png";
+import paper from "./assets/paper.png";
+import rock from "./assets/rock.png";
+import sizzorr from "./assets/sizzor.png";
+import spock from "./assets/spock.png";
+import thumbsup from "./assets/thumbsup.png";
 
 function App() {
   const Webcamref = useRef(null);
@@ -21,6 +28,7 @@ function App() {
 
 
   const detect = async (net) => {
+    //check data available???
     if(typeof Webcamref.current !== "undefined" && Webcamref.current !== null && Webcamref.current.video.readyState === 4){
      //get the video properties
       const video = Webcamref.current.video;
@@ -37,12 +45,23 @@ function App() {
 
       //making detections
       const hand = await net.estimateHands(video);
-      if (hand == 0) {
-        console.log("tera haat nai  dik raha ");}else{
-          console.log("tera haat dik raha ");
-        }
+      // if (hand == 0) {
+      //   console.log("tera haat nai  dik raha ");}else{
+      //     console.log("tera haat dik raha ");
+      //   }
 
       //console.log(hand);
+      if(hand.length > 0){
+        const ge = new fp.GestureEstimator([
+          fp.Gestures.VictoryGesture,
+          fp.Gestures.ThumbsUpGesture,
+         
+        ]);
+        
+        const gesture = await ge.estimate(hand[0].landmarks, 8);
+        console.log(gesture.gestures);
+
+      }
      
 
       // render the mesh 
