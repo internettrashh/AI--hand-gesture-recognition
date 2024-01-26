@@ -15,6 +15,8 @@ import thumbsup from "./assets/thumbsup.png";
 function App() {
   const Webcamref = useRef(null);
   const canvasref = useRef(null);
+  const [emoji,setemoji] = useState(null);
+  const images = {thumbs_up:thumbsup,rock:rock,paper:paper,victory:sizzorr,spock:spock,fku:fku};
   const runhandpose = async () => {
     const net = await handpose.load();
     console.log('model load ho gaya ');
@@ -51,17 +53,27 @@ function App() {
       //   }
 
       //console.log(hand);
-      if(hand.length > 0){
-        const ge = new fp.GestureEstimator([
+      if (hand.length > 0) {
+        const GE = new fp.GestureEstimator([
           fp.Gestures.VictoryGesture,
           fp.Gestures.ThumbsUpGesture,
-         
         ]);
-        
-        const gesture = await ge.estimate(hand[0].landmarks, 8);
-        console.log(gesture.gestures);
+        const gesture = await GE.estimate(hand[0].landmarks, 4);
+        if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
+          // console.log(gesture.gestures);
 
+          const confidence = gesture.gestures.map(
+            (prediction) => prediction.score
+          );
+          const maxConfidence = confidence.indexOf(
+            Math.max.apply(null, confidence)
+          );
+           console.log(gesture.gestures[maxConfidence].name);
+          setemoji(gesture.gestures[maxConfidence].name);
+          //console.log(emoji);
+        }
       }
+      
      
 
       // render the mesh 
@@ -80,6 +92,19 @@ function App() {
         <canvas
           ref={canvasref}
           style={webcamstyle} />
+          {setemoji !== null ? (
+            <img src={images[emoji]} style={{
+              position: "absolute",
+              marginLeft: "auto",
+              marginRight: "auto",
+              left: 400,
+              bottom: 500,
+              right: 0,
+              textAlign: "center",
+              height: 100,}} />
+          ) : (
+            ""
+          )}
         </header>
       </div>
     </>
