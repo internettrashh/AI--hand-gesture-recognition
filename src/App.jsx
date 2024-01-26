@@ -16,10 +16,12 @@ function App() {
   const Webcamref = useRef(null);
   const canvasref = useRef(null);
   const [emoji,setemoji] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const images = {thumbs_up:thumbsup,rock:rock,paper:paper,victory:sizzorr,spock:spock,fku:fku};
   const runhandpose = async () => {
     const net = await handpose.load();
     console.log('model load ho gaya ');
+    setIsLoading(false);
     setInterval(() => {
       detect(net);
     }, 100);
@@ -84,15 +86,17 @@ function App() {
 
   return (
     <>
-      <div  className='App'>
+      <div  >
         <header className='App-header'>
-          <h1>tera haat dik raa?</h1>
+        {isLoading ? <h1>Model load ho raha ruk</h1> : null}
+          <h1>rock paper scissor bc</h1>
         
         <Webcam  ref={Webcamref} style={webcamstyle}/>
         <canvas
           ref={canvasref}
           style={webcamstyle} />
           {setemoji !== null ? (
+            
             <img src={images[emoji]} style={{
               position: "absolute",
               marginLeft: "auto",
@@ -102,6 +106,7 @@ function App() {
               right: 0,
               textAlign: "center",
               height: 100,}} />
+              
           ) : (
             ""
           )}
@@ -116,6 +121,7 @@ const webcamstyle = {
   
   marginLeft: 'auto',
   marginRight: 'auto',
+  
   left: 0,
   right: 0,
   textAlign: 'center',
