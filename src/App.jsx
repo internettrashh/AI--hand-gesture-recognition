@@ -13,13 +13,14 @@ import spock from "./assets/spock.png";
 import thumbsup from "./assets/thumbsup.png";
 import {PaperGesture} from './Fingagestures/Paperr'
 import {victoryDescription} from './Fingagestures/Sizzor';
+import { Rock } from './Fingagestures/Rock';
 
 function App() {
   const Webcamref = useRef(null);
   const canvasref = useRef(null);
   const [emoji,setemoji] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const images = {thumbs_up:thumbsup,rock:rock,paper:paper,sizzor:sizzorr,spock:spock,fku:fku};
+  const images = {thumbs_up:thumbsup,rock:rock,paper:paper,sizzor:sizzorr,spock:spock,fku:fku}; // to do: remove onused images
   const runhandpose = async () => {
     const net = await handpose.load();
     console.log('model load ho gaya ');
@@ -61,8 +62,9 @@ function App() {
         const GE = new fp.GestureEstimator([
           //fp.Gestures.VictoryGesture,
           victoryDescription,
-          fp.Gestures.ThumbsUpGesture,
+          //fp.Gestures.ThumbsUpGesture,
            PaperGesture,
+            Rock,
         ]);
         const gesture = await GE.estimate(hand[0].landmarks, 5);
         if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
