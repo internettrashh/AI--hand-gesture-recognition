@@ -11,13 +11,15 @@ import rock from "./assets/rock.png";
 import sizzorr from "./assets/sizzor.png";
 import spock from "./assets/spock.png";
 import thumbsup from "./assets/thumbsup.png";
+import {PaperGesture} from './Fingagestures/Paperr'
+import {victoryDescription} from './Fingagestures/Sizzor';
 
 function App() {
   const Webcamref = useRef(null);
   const canvasref = useRef(null);
   const [emoji,setemoji] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const images = {thumbs_up:thumbsup,rock:rock,paper:paper,victory:sizzorr,spock:spock,fku:fku};
+  const images = {thumbs_up:thumbsup,rock:rock,paper:paper,sizzor:sizzorr,spock:spock,fku:fku};
   const runhandpose = async () => {
     const net = await handpose.load();
     console.log('model load ho gaya ');
@@ -57,12 +59,14 @@ function App() {
       //console.log(hand);
       if (hand.length > 0) {
         const GE = new fp.GestureEstimator([
-          fp.Gestures.VictoryGesture,
+          //fp.Gestures.VictoryGesture,
+          victoryDescription,
           fp.Gestures.ThumbsUpGesture,
+           PaperGesture,
         ]);
-        const gesture = await GE.estimate(hand[0].landmarks, 4);
+        const gesture = await GE.estimate(hand[0].landmarks, 5);
         if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
-          // console.log(gesture.gestures);
+          //console.log(gesture.gestures);
 
           const confidence = gesture.gestures.map(
             (prediction) => prediction.score
@@ -70,9 +74,13 @@ function App() {
           const maxConfidence = confidence.indexOf(
             Math.max.apply(null, confidence)
           );
-           console.log(gesture.gestures[maxConfidence].name);
+          if (gesture.gestures && gesture.gestures.length > maxConfidence && gesture.gestures[maxConfidence]) {
+          const playergesture = gesture.gestures[maxConfidence].name;
+          console.log(playergesture);
+           //console.log(gesture.gestures[maxConfidence].name);
           setemoji(gesture.gestures[maxConfidence].name);
           //console.log(emoji);
+          }
         }
       }
       
@@ -83,6 +91,28 @@ function App() {
       drawHand(hand, ctx);
     }
   };
+
+  //TO DO : WORK ON THE GAME FUNCTION AFTER IMPLEMENTING CUSTOME HAND POSE
+  // const playGame = (playerGesture) => {
+  //   const computerGesture = ['rock', 'paper', 'scissors'][Math.floor(Math.random() * 3)];
+  
+  //   let result;
+  //   if (playerGesture === computerGesture) {
+  //     result = 'It\'s a tie!';
+  //   } else if (
+  //     (playerGesture === 'rock' && computerGesture === 'scissors') ||
+  //     (playerGesture === 'scissors' && computerGesture === 'paper') ||
+  //     (playerGesture === 'paper' && computerGesture === 'rock')
+  //   ) {
+  //     result = 'You win!';
+  //   } else {
+  //     result = 'You lose!';
+  //   }
+  
+  //   setGameResult(result);
+  // };
+
+
 
   return (
     <>
